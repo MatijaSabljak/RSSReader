@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13174"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" restorationIdentifier="StoriesCell" selectionStyle="default" indentationWidth="10" rowHeight="80" id="KGk-i7-Jjw" customClass="StoriesCell" customModule="RSSReader" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="80"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="79.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LTL-ZE-zqB">
+                        <rect key="frame" x="8" y="11" width="56" height="56"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="56" id="55M-2g-Vjb"/>
+                            <constraint firstAttribute="width" constant="56" id="z4s-CY-1oN"/>
+                        </constraints>
+                    </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nm1-Ay-fkB">
+                        <rect key="frame" x="69" y="13" width="238" height="53.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <color key="textColor" red="1" green="0.15340714247163689" blue="0.3179377031229762" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                <constraints>
+                    <constraint firstItem="LTL-ZE-zqB" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="3" id="LsN-d6-nRJ"/>
+                    <constraint firstItem="LTL-ZE-zqB" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="R4c-0h-Yb1"/>
+                    <constraint firstItem="Nm1-Ay-fkB" firstAttribute="leading" secondItem="LTL-ZE-zqB" secondAttribute="trailing" constant="5" id="eAv-sl-Edx"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="Nm1-Ay-fkB" secondAttribute="bottom" constant="5" id="eMD-fO-VJd"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="Nm1-Ay-fkB" secondAttribute="trailing" constant="5" id="gNb-6l-LvR"/>
+                    <constraint firstItem="Nm1-Ay-fkB" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="5" id="qCL-vW-Bne"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="storyImage" destination="LTL-ZE-zqB" id="VlA-oR-pOF"/>
+                <outlet property="storyNameLabel" destination="Nm1-Ay-fkB" id="FQO-Rn-0Xs"/>
+            </connections>
+            <point key="canvasLocation" x="-96" y="26"/>
+        </tableViewCell>
+    </objects>
+</document>

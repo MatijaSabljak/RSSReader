@@ -7,15 +7,32 @@
 //
 
 import UIKit
+import UserNotifications
+import AlamofireRSSParser
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, RSSResponse {
 
     var window: UIWindow?
 
+    private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier?
 
+    private var timer = Timer()
+    
+    private var feedsRealm = [FeedRealmModel]()
+    
+    private let realmManager = RealmManager()
+    
+    private let parser = RSSParser()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        window = UIWindow(frame: UIScreen.main.bounds)
         // Override point for customization after application launch.
+        setNotification()
+        let homeViewController = FeedScreenViewController()
+        let navigationController = UINavigationController(rootViewController: homeViewController)
+        window!.rootViewController = navigationController
+        window!.makeKeyAndVisible()
         return true
     }
 
@@ -27,6 +44,67 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        print("app Enter in Background mode")
+        
+        feedsRealm = realmManager.queryFeeds()
+        parser.delegate = self
+        
+        backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: {
+            UIApplication.shared.endBackgroundTask(self.backgroundTaskIdentifier!)
+        })
+       
+        timer = Timer.scheduledTimer(timeInterval: 120, target: self, selector: #selector(checkFeeds), userInfo: nil, repeats: true)
+    }
+    
+    func setNotification(){
+        UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+            if(settings.authorizationStatus == .authorized) {
+                //self.scheduleNotification(name: name)
+            } else {
+                UNUserNotificationCenter.current().requestAuthorization(options: [.sound, .badge, .alert], completionHandler: { (granted, error) in
+                    if let error = error {
+                        print(error)
+                    } else {
+                        if (granted) {
+                            //self.scheduleNotification(name: name)
+                        }
+                    }
+                })
+            }
+        }
+    }
+    
+    @objc private func checkFeeds(){
+        print("timer on")
+       
+        for index in 0...feedsRealm.count-1 {
+            let feed = feedsRealm[index]
+            let _ = parser.parse(url: feed.feedUrl, name: feed.feedName)
+        }
+    }
+    
+    // protocol method, check every 2 minutes for new stories
+    
+    func response(feed: RSSFeed?, name: String) {
+        for index in 0...feedsRealm.count-1 {
+            let feedFromRealm = feedsRealm[index]
+            if feedFromRealm.feedName == name {
+
+                if let feed = feed {
+                    if let firstFeed = feed.items.first {
+                        if let date = firstFeed.pubDate {
+                            let dateFormater = DateFormatter()
+                            dateFormater.dateFormat = "yyyy-MM-dd HH:mm:ss"
+                            if let dateFromRealm = dateFormater.date(from: feedFromRealm.lastStoryTime) {
+                                if dateFromRealm < date {
+                                    scheduleNotification(name: feedFromRealm.feedName)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
@@ -39,6 +117,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+    
+    private func scheduleNotification(name: String){
+        let content = UNMutableNotificationContent()
+        content.title = "New feed"
+        content.body = "\(name) has new story"
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1.0, repeats: false)
+        let notificationRequest = UNNotificationRequest(identifier: "notif", content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(notificationRequest, withCompletionHandler: { (error) in
+            if let error = error {
+                print(error)
+            } else {
+                print("Notification scheduled!")
+            }
+        })
     }
 
 
